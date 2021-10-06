@@ -4,7 +4,9 @@ Compilers course assignment
 # First steps
 Execute the commands below to install the dependencies:
 > python -m venv venv
+> 
 > venv\Scripts\activate
+> 
 > pip install antlr4-python3-runtime
 
 # How to use
