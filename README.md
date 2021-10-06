@@ -1,0 +1,2 @@
+# LALGCompiler
+Compilers course assignment
