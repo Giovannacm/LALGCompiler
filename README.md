@@ -14,4 +14,4 @@ Execute the command below to execute the application:
 > python main.py codes/com.txt
 
 # When the grammar rules are changed, you need to generate the grammar files from the command: 
-> java -jar antlr-4.9.2-complete.jar -Dlanguage=Python3 LALGGrammar.g4 -visitor -o generated
+> java -jar antlr-4.9.2-complete.jar -Dlanguage=Python3 LALG.g4 -visitor -o generated
