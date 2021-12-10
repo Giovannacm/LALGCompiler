@@ -3,7 +3,7 @@ grammar LALG;
 
 program: PROGRAM identifier SEMI block DOT ;
 
-block: (variableDeclarationPart procedureDeclarationPart compoundStatement) | (variableDeclarationPart compoundStatement) | (procedureDeclarationPart compoundStatement) | (compoundStatement) ; 
+block: (variableDeclarationPart procedureDeclarationPart compoundStatement) | (compoundStatement) ; 
 
 
 variableDeclarationPart: variableDeclaration (SEMI variableDeclaration)* SEMI ; 
@@ -20,7 +20,7 @@ procedureDeclaration: PROCEDURE identifier (formalParameter)? SEMI block ;
 
 formalParameter: LPAREN formalParameterSection (SEMI formalParameterSection)* RPAREN ;
 
-formalParameterSection: (VAR identifierList COLON identifier) | (identifierList COLON identifier) ;
+formalParameterSection: (VAR identifierList COLON simpleType) ;
 
 
 compoundStatement: BEGIN statement (SEMI statement)* END ;
@@ -31,12 +31,12 @@ assignmentStatement: variable ASSIGN expression ;
 
 procedureStatement: identifier (LPAREN expressionList RPAREN)? ;
 
-conditionalStatement: (IF expression THEN statement ELSE statement) | (IF expression THEN statement) ;
+conditionalStatement: (IF expression statement ELSE statement) | (IF expression statement) ;
 
-repetetiveStatement: WHILE expression DO statement ; 
+repetetiveStatement: WHILE expression statement ; 
 
 
-expression: simpleExpression (relationalOperator simpleExpression)? ;
+expression: simpleExpression (relationalOperator simpleExpression)? | TRUE | FALSE ;
 
 relationalOperator: GT | GE | LT | LE | NOT_EQUAL | EQUAL ;
 
@@ -59,9 +59,9 @@ expressionList: expression (COMMA expression)* ;
 identifier: IDENT ;
 
 
-BARCOMMENT: '//' .*? '\n' ;
+BARCOMMENT: '//' .*? '\n' -> skip;
 
-BRACKETCOMMENT: '{' ~('}' | '{')* '}' ;
+BRACKETCOMMENT: '{' .*? '}' -> skip;
 
 
 PROGRAM: 'program' ;
@@ -75,8 +75,6 @@ END: 'end' ;
 VAR: 'var' ;
 
 IF: 'if' ;
-
-THEN: 'then' ;
 
 ELSE: 'else' ;
 
