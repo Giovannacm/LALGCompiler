@@ -14,12 +14,19 @@ class CustomVisitor(LALGVisitor):
 		return self.visitChildren(ctx)
 
 
-	# Visit a parse tree produced by LALGParser#block.
-	def visitBlock(self, ctx:LALGParser.BlockContext):
+	# Visit a parse tree produced by LALGParser#variableDeclarationPart.
+	def visitVariableDeclarationPart(self, ctx:LALGParser.VariableDeclarationPartContext):
 		self.table = VisitorSymbolTable()
 		self.scope += 1
 		self.scopeTable.append(self.table)
 		return self.visitChildren(ctx)
+
+
+	# Visit a parse tree produced by LALGParser#block.
+	def visitBlock(self, ctx:LALGParser.BlockContext):
+		result = self.visitChildren(ctx)
+		self.scope -= 1
+		return result
 
 
 	# Visit a parse tree produced by LALGParser#variableDeclaration.

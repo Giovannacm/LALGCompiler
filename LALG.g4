@@ -3,7 +3,7 @@ grammar LALG;
 
 program: PROGRAM identifier SEMI block DOT ;
 
-block: (variableDeclarationPart procedureDeclarationPart compoundStatement) | (compoundStatement) ; 
+block: (variableDeclarationPart procedureDeclarationPart compoundStatement) | (variableDeclarationPart compoundStatement) | (compoundStatement) ; 
 
 
 variableDeclarationPart: variableDeclaration (SEMI variableDeclaration)* SEMI ; 

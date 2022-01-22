@@ -6,8 +6,8 @@ from created.VisitorSymbolTable import Type
 
 
 class CustomCodeGenerator(LALGVisitor):
-	def getVariablesValues(self):
-		for i in range(0, self.scope+1):
+	def printVariablesValues(self):
+		for i in range(0, len(self.scopeTable)):
 			print('\nScope: ' + str(i))
 
 			for variable in self.scopeTable[i]:
@@ -17,7 +17,11 @@ class CustomCodeGenerator(LALGVisitor):
 	def getVariableValue(self, scope, name):
 		for variable in self.scopeTable[scope]:
 			if variable['name'] == name:
-				print(variable['name'] + ': ' + str(variable['value']))
+				return(variable['value'])
+
+
+	def getVariableType(self, scope, name):
+		return [variable for variable in self.scopeTable[scope] if variable['name'] == name][0]['type']
 
 
 	def setVariableValue(self, scope, name, value):
@@ -33,21 +37,38 @@ class CustomCodeGenerator(LALGVisitor):
 		return self.visitChildren(ctx)
 
 
-	# Visit a parse tree produced by LALGParser#block.
-	def visitBlock(self, ctx:LALGParser.BlockContext):
+	# Visit a parse tree produced by LALGParser#variableDeclarationPart.
+	def visitVariableDeclarationPart(self, ctx:LALGParser.VariableDeclarationPartContext):
 		self.table = list()
 		self.scope += 1
 		self.scopeTable.append(self.table)
 		return self.visitChildren(ctx)
 
 
+	# Visit a parse tree produced by LALGParser#block.
+	def visitBlock(self, ctx:LALGParser.BlockContext):
+		result = self.visitChildren(ctx)
+		self.scope -= 1
+		return result
+
+
 	# Visit a parse tree produced by LALGParser#variableDeclaration.
 	def visitVariableDeclaration(self, ctx:LALGParser.VariableDeclarationContext):
+		varTypeStr = ctx.simpleType().getText()
+		varType = Type.INVALID
+
+		if (varTypeStr == 'int'):
+			varType = Type.INTEGER
+		elif (varTypeStr == 'real'):
+			varType = Type.REAL
+		elif (varTypeStr == 'boolean'):
+			varType = Type.BOOLEAN
+
 		variables = ctx.identifierList().identifier()
 
 		for variable in variables:
 			varName = variable.getText()
-			self.scopeTable[self.scope].append({'name': varName, 'value': None})
+			self.scopeTable[self.scope].append({'name': varName, 'type': varType, 'value': None})
 
 		return self.visitChildren(ctx)
 
@@ -98,11 +119,23 @@ class CustomCodeGenerator(LALGVisitor):
 
 	# Visit a parse tree produced by LALGParser#procedureStatement.
 	def visitProcedureStatement(self, ctx:LALGParser.ProcedureStatementContext):
+		variableName = ctx.expressionList().expression()[0].getText()
 		if ctx.identifier().getText() == 'write':
-			print('> ' + str(self.getVariableValue(self.scope, ctx.expressionList().expression()[0])))
+			variableValue = self.getVariableValue(self.scope, variableName)
+			print('> ' + str(variableValue))
 		elif ctx.identifier().getText() == 'read':
-			value = int(input('< '))
-			self.setVariableValue(self.scope, ctx.expressionList().expression()[0], value)
+			variableType = self.getVariableType(self.scope, variableName)
+			value = None
+			try:
+				if (variableType == Type.INTEGER):
+					value = int(input('< '))
+				elif (variableType == Type.REAL):
+					value = float(input('< '))
+				elif (variableType == Type.BOOLEAN):
+					value = bool(input('< '))
+			except ValueError:
+				raise ValueError("Atribuicao invalida | ValueError exception")
+			self.setVariableValue(self.scope, variableName, value)
 		return self.visitChildren(ctx)
 
 

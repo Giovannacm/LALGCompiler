@@ -18,10 +18,6 @@ from created.SemanticUtil import SemanticUtil
 #Command to run this code (with the virtual enviroment activated):
 #  python main.py codes/correto.txt
 
-#TO-DO
-#   scopo
-#   leitura (ver o tipo)
-
 
 def compressErrors(lexicon, syntactic, semantic):
     errors = list()
@@ -49,7 +45,7 @@ if __name__ == "__main__":
     data = FileStream(sys.argv[1])
     
     #Analise lexica
-    print('Analise lexica')
+    #print('Analise lexica')
     lexer = LALGLexer(data)
 
     stream = CommonTokenStream(lexer)
@@ -69,7 +65,7 @@ if __name__ == "__main__":
     lexer.reset()
 
     #Analise sintatica
-    print('Analise sintatica')
+    #print('Analise sintatica')
     parser = LALGParser(stream)
 
     parser.removeErrorListeners()
@@ -80,7 +76,7 @@ if __name__ == "__main__":
     #ccel.printSyntaxErrors()
 
     #Evaluator - Analise semantica - Esquemas de Traducao Dirigida pela Sintaxe (TDS)
-    print('Analise semantica')
+    #print('Analise semantica')
     visitor = CustomVisitor()
     output = visitor.visitProgram(tree)
 
@@ -92,6 +88,6 @@ if __name__ == "__main__":
     else:
         codeGenerator = CustomCodeGenerator()
         output = codeGenerator.visitProgram(tree)
-        codeGenerator.getVariablesValues()
+        #codeGenerator.printVariablesValues()
 
 #Developed by Giovanna Marinho and Guilherme Molina
